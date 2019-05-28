@@ -1,5 +1,6 @@
 package demo;
 import com.google.gson.*;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -7,7 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-public class GitController {
+public class GitController implements ErrorController {
+
+    private static final String PATH = "/error";
 
     @RequestMapping("/")
     public String index(){
@@ -29,5 +32,14 @@ public class GitController {
         }
         JsonElement je = jp.parse(resultJSON);
         return gson.toJson(je);
+    }
+    @RequestMapping(value = PATH)
+    public String error(){
+        return "Error handling, probably wrong endpoint used";
+    }
+
+    @Override
+    public String getErrorPath() {
+        return PATH;
     }
 }
