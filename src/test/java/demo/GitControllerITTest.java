@@ -24,6 +24,7 @@ public class GitControllerITTest {
     private int port;
     private URL base;
     private URL getDescriptionURL;
+    private URL wrongURL;
 
     @Autowired
     private TestRestTemplate template;
@@ -32,6 +33,7 @@ public class GitControllerITTest {
     public void setUp() throws Exception {
         this.base = new URL("http://localhost:" + port + "/");
         this.getDescriptionURL = new URL("http://localhost:" + port + "/repositories/twbs/bootstrap");
+        this.wrongURL = new URL("http://localhost:"+ port + "/wrong/endpoint");
     }
 
     @Test
@@ -49,5 +51,10 @@ public class GitControllerITTest {
         assertThat(response.getBody(), containsString("\"cloneUrl\": \"https://github.com/twbs/bootstrap.git\""));
         assertThat(response.getBody(), containsString("\"stars\": "));
         assertThat(response.getBody(), containsString("\"createdAt\": \"2011-07-29T21:19:00Z\"\n"));
+    }
+    @Test
+    public void errorHandling(){
+        ResponseEntity<String> responseEntity = template.getForEntity(wrongURL.toString(), String.class);
+        assertThat(responseEntity.getBody(), equalTo("Error handling, probably wrong endpoint used"));
     }
 }
